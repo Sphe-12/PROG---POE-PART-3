@@ -1,0 +1,21 @@
+<ul class="navbar-nav">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <li class="nav-item">
+            <span class="navbar-text me-2">
+                @User.Identity.Name
+                <span class="badge rd-role-badge">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+            </span>
+        </li>
+        <li class="nav-item">
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button class="btn btn-outline-light btn-sm" type="submit">Log out</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item"><a class="btn btn-outline-light btn-sm me-2" asp-controller="Account" asp-action="Login">Log in</a></li>
+        <li class="nav-item"><a class="btn rd-btn-accent btn-sm" asp-controller="Account" asp-action="Register">Register</a></li>
+    }
+</ul>
