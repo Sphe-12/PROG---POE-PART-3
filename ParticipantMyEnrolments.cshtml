@@ -1,0 +1,31 @@
+@model List<EnrolmentDto>
+@{ ViewData["Title"] = "My enrolments"; }
+<h1 class="h3 mb-4">My enrolments</h1>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">You are not enrolled in any events yet. <a asp-controller="Home" asp-action="Index">Find an event →</a></div>
+}
+else
+{
+    <div class="card rd-card shadow-sm"><div class="card-body">
+        <table class="table align-middle">
+            <thead><tr><th>Event</th><th>Date</th><th>Category</th><th>Status</th><th>Bib #</th></tr></thead>
+            <tbody>
+            @foreach (var e in Model)
+            {
+                <tr>
+                    <td><a asp-controller="Home" asp-action="Details" asp-route-id="@e.EventID">@e.Event</a></td>
+                    <td>@e.EventDate.ToString("dd MMM yyyy")</td>
+                    <td>@e.Category</td>
+                    <td>
+                        @if (e.EnrollmentStatus == "Confirmed") { <span class="badge bg-success">Confirmed</span> }
+                        else if (e.EnrollmentStatus == "Pending") { <span class="badge bg-warning text-dark">Pending</span> }
+                        else { <span class="badge bg-secondary">@e.EnrollmentStatus</span> }
+                    </td>
+                    <td>@(e.BibNumber ?? "—")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div></div>
+}
