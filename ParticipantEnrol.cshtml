@@ -1,0 +1,33 @@
+@model EnrolViewModel
+@{ ViewData["Title"] = "Enrol — " + Model.Event.EventName; }
+<h1 class="h4 mb-1">Enrol in @Model.Event.EventName</h1>
+<p class="text-muted">@Model.Event.EventDate.ToString("dddd, dd MMM yyyy HH:mm") — @Model.Event.Location</p>
+<div class="card rd-card shadow-sm">
+    <div class="card-body p-4">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (!Model.Categories.Any())
+        {
+            <div class="alert alert-info mb-0">No categories are available for this event yet.</div>
+        }
+        else
+        {
+            <form method="post">
+                <input type="hidden" asp-for="Event.EventID" />
+                <label class="form-label fw-semibold">Choose your category</label>
+                @foreach (var c in Model.Categories)
+                {
+                    <div class="form-check rd-category-option">
+                        <input class="form-check-input" type="radio" asp-for="SelectedCategoryId" value="@c.CategoryID" id="cat-@c.CategoryID" />
+                        <label class="form-check-label" for="cat-@c.CategoryID">
+                            <strong>@c.CategoryName</strong> — @c.DistanceKM km,
+                            ages @c.MinimumAge–@(c.MaximumAge?.ToString() ?? "+"),
+                            @c.EntryFee.ToString("C")
+                        </label>
+                    </div>
+                }
+                <button class="btn rd-btn-accent mt-3">Confirm enrolment</button>
+                <a class="btn btn-outline-secondary mt-3" asp-controller="Home" asp-action="Details" asp-route-id="@Model.Event.EventID">Cancel</a>
+            </form>
+        }
+    </div>
+</div>
