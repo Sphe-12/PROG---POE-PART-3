@@ -1,0 +1,58 @@
+@model EventListViewModel
+@{ ViewData["Title"] = "Upcoming events"; }
+<div class="rd-hero mb-4">
+    <h1 class="display-5 fw-bold">Find your next race</h1>
+    <p class="lead">Browse upcoming RaceDay events and enrol in seconds.</p>
+</div>
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-4"><input name="search" value="@Model.Search" class="form-control" placeholder="Search name or location…" /></div>
+    <div class="col-md-3">
+        <select name="status" class="form-select">
+            <option value="">Any status</option>
+            @foreach (var s in new[] { "Upcoming", "Open", "Closed", "Completed", "Cancelled" })
+            {
+                <option value="@s" selected="@(Model.Status == s)">@s</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="type" class="form-select">
+            <option value="">Any type</option>
+            @foreach (var t in Model.AllTypes)
+            {
+                <option value="@t" selected="@(Model.Type == t)">@t</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2"><button class="btn rd-btn-accent w-100">Filter</button></div>
+</form>
+@if (!Model.Events.Any())
+{
+    <div class="alert alert-info">No upcoming events match your filters.</div>
+}
+<div class="row g-4">
+    @foreach (var e in Model.Events)
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card rd-card h-100 shadow-sm">
+                @if (e.HasBanner)
+                {
+                    <img src="@Url.Action("EventImage", new { id = e.EventID })" class="card-img-top rd-banner" alt="@e.EventName banner" />
+                }
+                <div class="card-body">
+                    <span class="badge rd-status-@e.Status">@e.Status</span>
+                    <h5 class="card-title mt-2">@e.EventName</h5>
+                    <p class="card-text text-muted mb-1">📅 @e.EventDate.ToString("dddd, dd MMM yyyy HH:mm")</p>
+                    <p class="card-text text-muted mb-1">📍 @e.Location</p>
+                    <p class="card-text small">
+                        @if (!string.IsNullOrEmpty(e.EventType)) { <span class="badge bg-secondary">@e.EventType</span> }
+                        @if (e.DistanceKM.HasValue) { <span class="badge bg-secondary">@e.DistanceKM km</span> }
+                    </p>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a class="btn btn-sm btn-outline-dark w-100" asp-action="Details" asp-route-id="@e.EventID">View details</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
