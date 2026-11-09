@@ -1,0 +1,24 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: RaceDay.Api/Dockerfile
+    ports:
+      - "5080:8080"
+    environment:
+      # Point at your SQL Server. Trusted_Connection does not work in Linux
+      # containers, so use SQL authentication here.
+      ConnectionStrings__RaceDay: "Server=host.docker.internal;Database=RaceDayDB;User Id=raceday;Password=Your_password123;TrustServerCertificate=True;"
+      # Set to your Azure Storage connection string to enable Azure Blob Storage.
+      # Leave empty to use the built-in local-disk development fallback.
+      Storage__ConnectionString: ""
+  web:
+    build:
+      context: .
+      dockerfile: RaceDay.Web/Dockerfile
+    ports:
+      - "8081:8080"
+    environment:
+      Api__BaseUrl: "http://api:8080"
+    depends_on:
+      - api
