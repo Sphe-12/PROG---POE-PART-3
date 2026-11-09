@@ -1,0 +1,39 @@
+@model List<MyResultDto>
+@{ ViewData["Title"] = "My results"; }
+<h1 class="h3 mb-4">My race results</h1>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No results published for you yet — results are captured by the organiser after each event.</div>
+}
+else
+{
+    <div class="card rd-card shadow-sm"><div class="card-body">
+        <table class="table align-middle">
+            <thead><tr><th>Event</th><th>Date</th><th>Category</th><th>Finish time</th><th>Position</th><th>Status</th></tr></thead>
+            <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.Event</td>
+                    <td>@r.EventDate.ToString("dd MMM yyyy")</td>
+                    <td>@r.Category</td>
+                    <td>@DisplayFormatter.FormatTime(r.FinishTimeSeconds)</td>
+                    <td>
+                        @if (r.ResultStatus == "Finished")
+                        {
+                            <strong>@DisplayFormatter.GetOrdinal(r.Position ?? 0)</strong>
+                            <span class="text-muted">out of @r.TotalFinishers finishers</span>
+                        }
+                        else { <span>—</span> }
+                    </td>
+                    <td>
+                        @if (r.ResultStatus == "Finished") { <span class="badge bg-success">Finished</span> }
+                        else if (r.ResultStatus == "DNF") { <span class="badge bg-warning text-dark">DNF</span> }
+                        else { <span class="badge bg-danger">Disqualified</span> }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div></div>
+}
